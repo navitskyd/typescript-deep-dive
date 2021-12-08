@@ -12,11 +12,11 @@
   "keywords": [],
   "author": "Vitaliy Zhyrytskyy",
   "license": "ISC",
-  "dependencies": {},
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.24.0",
     "@typescript-eslint/parser": "^4.24.0",
     "clean-webpack-plugin": "^3.0.0",
+    "esbuild": "^0.14.2",
     "eslint": "^7.26.0",
     "html-webpack-plugin": "^4.5.2",
     "prettier": "^2.3.0",
