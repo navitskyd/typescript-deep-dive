@@ -49,7 +49,7 @@ module.exports = {
         'no-eval': 'error',
         'no-redeclare': 'error',
         'no-trailing-spaces': 'error',
-        'no-underscore-dangle': 'error',
+        //'no-underscore-dangle': 'error',
         'no-unsafe-finally': 'error',
         'no-var': 'error',
         'spaced-comment': ['error', 'always', { markers: ['/'] }],
