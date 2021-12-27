@@ -1,6 +1,6 @@
 import { Category } from './enums';
-import { BookProperties, Books, Library } from './types';
-import { Book } from './interfaces';
+import { BookProperties, Library } from './types';
+import { Book, Callback } from './interfaces';
 import RefBook from './classes/encyclopedia';
 
 export function printBook(book: Book): void {
@@ -80,9 +80,10 @@ export function logFirstAvailable(books: ReadonlyArray<Book> = []): void {
 }
 
 
-export function getBookTitlesByCategory(category: Category = Category.JavaScript): Books | [] {
+export function getBookTitlesByCategory(category: Category = Category.JavaScript): string [] {
     const books: ReadonlyArray<Book> = getAllBooks();
-    return books.filter((book: Book) => book.category === category);
+    const titles: string[] = books.filter((book: Book) => book.category === category).map(book => book.title);
+    return titles;
 }
 
 export function logBookTitles(titles: string[]): void {
@@ -176,4 +177,82 @@ export function printRefBook(data: any): void {
 
 export function purge<T>(inputArray: Array<T>): Array<T> {
     return inputArray.slice(2);
+}
+
+export function makeProperty<T>(
+    prototype: any,
+    propertyName: string,
+    getTransformer: (value: any) => T,
+    setTransformer: (value: any) => T,
+) {
+    const values = new Map<any, T>();
+
+    Object.defineProperty(prototype, propertyName, {
+        set(firstValue: any) {
+            Object.defineProperty(this, propertyName, {
+                get() {
+                    if (getTransformer) {
+                        return getTransformer(values.get(this));
+                    } else {
+                        values.get(this);
+                    }
+                },
+                set(value: any) {
+                    if (setTransformer) {
+                        values.set(this, setTransformer(value));
+                    } else {
+                        values.set(this, value);
+                    }
+                },
+                enumerable: true,
+            });
+            this[propertyName] = firstValue;
+        },
+        enumerable: true,
+        configurable: true,
+    });
+}
+
+export function getBooksByCategory(category: Category, callback: Callback<string[]>): void {
+    setTimeout(() => {
+        try {
+            const titles = getBookTitlesByCategory(category);
+            if (titles.length > 0) {
+                callback(null, titles);
+            } else {
+                throw new Error('No books found');
+            }
+        } catch (err) {
+            callback(err, null);
+        }
+    }, 2000);
+}
+
+export function logCategorySearch(err: Error | null, titles: string[] | null): void {
+    if (err) {
+        console.log(err.message);
+    } else {
+        console.log(titles);
+    }
+
+}
+
+
+export function getBooksByCategoryPromise(category: Category): Promise<string[]> {
+    return new Promise<string[]>((resolve, reject) => {
+        setTimeout(() => {
+            const titles = getBookTitlesByCategory(category);
+            if (titles.length > 0) {
+                resolve(titles);
+            } else {
+                reject('No books found');
+            }
+        }, 2000);
+    });
+
+}
+
+export async function logSearchResults(category: Category) {
+    const result = await getBooksByCategoryPromise(category);
+    console.log(result.length);
 }
