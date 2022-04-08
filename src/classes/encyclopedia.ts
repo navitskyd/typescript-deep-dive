@@ -1,4 +1,4 @@
-import { RefItem } from '../classes';
+import { RefItem } from './index';
 import { positiveInteger } from './decorators';
 
 export default class Encyclopedia extends RefItem {
